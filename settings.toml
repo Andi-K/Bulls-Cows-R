@@ -1,0 +1,7 @@
+[game]
+min = 0
+max = 7
+digits = 4
+	
+[UI]
+use_gui = true

@@ -1,0 +1,21 @@
+[package]
+
+name = "Bulls & Cows in reverse"
+version = "0.0.1"
+authors = [ "Your name <you@example.com>" ]
+
+[[bin]]
+
+name = "bcr"
+
+[dependencies]
+# lazy_static = "0.1.*"
+toml = "0.1"
+term-painter = "*"
+
+[dependencies.kiss-ui]
+git = "https://github.com/cybergeek94/kiss-ui"
+
+[dependencies.current]
+# git = "https://github.com/pistondevelopers/current"
+git = "https://github.com/Andi-K/current.git"
