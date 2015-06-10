@@ -1,9 +1,9 @@
 extern crate toml;
-use self::toml::{Encoder, Value};
+use self::toml::{Value};
 
 use std::io::prelude::*;
 use std::fs::File;
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 
 
 pub struct Settings {
@@ -38,7 +38,8 @@ impl<'a> Settings {
 		Settings {
 			min: lookup_int(&cnf, "game.min", 1) as u8,
 			max: lookup_int(&cnf, "game.max", 9) as u8,
-			digits: lookup_int(&cnf, "game.digits", 4) as u8,
+			digits: 4, // TODO: set other values to work
+//			digits: lookup_int(&cnf, "game.digits", 4) as u8,
 			useGui: cnf.lookup("UI.use_gui").and_then(|x| x.as_bool()).unwrap_or(false),
 		}
 	}

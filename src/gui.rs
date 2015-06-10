@@ -13,15 +13,36 @@ use kiss_ui::container::Orientation::Vertical as OVert;
 use kiss_ui::dialog::{self, AlertPopupBuilder};
 
 use std::boxed::Box;
-use std::str::FromStr;
 
 extern crate current;
-use current::{ Current, CurrentGuard };
+use current::{ Current };
 macro_rules! game (
 	() => (unsafe { &mut *Current::<game::Game>::new() })
 );
 
-
+/// Get a widget by its name
+///
+/// downcasted and with panic msg 
+///
+/// # Panics
+/// - `dialog` is not set
+/// - there is no or more then 1 widget with this `name`
+/// - widget can't be downcasted
+///
+/// # Examples
+///
+/// ```
+///     Label::new("Foo").set_name("Lbl_Foo"),
+///     Button::new("Button").set_name("Btn_Foo").set_onclick(btn_cb),
+/// ```
+/// ```
+/// fn btn_cb(btn: Button) {
+///     let dialog = btn.get_dialog().unwrap();
+///     let mut name = btn.get_name().unwrap();
+///     name.replace("Btn", "Lbl");
+///	    widget_by_name!(dialog, Label, name).set_text("Bar");
+/// }
+/// ```
 macro_rules! widget_by_name (
     ($dialog:ident, $w_type:ident, $name:ident) => (
 	$dialog.get_child(&$name)
@@ -32,43 +53,15 @@ macro_rules! widget_by_name (
 );
 
 
+const ICON_WIDTH: u32 = 20;
+const ICON_HEIGHT: u32 = 20;
+const ICON_SIZE: usize = (ICON_HEIGHT * ICON_WIDTH) as usize;
 
-fn btn_by_name(window: Dialog, name: &str) -> Button {
-//  let name = format!("{}{}", base_name, id);
-//    let name = base_name.to_string() + &(id.to_string());
-	window.get_child(&name)
-		.expect(&(format!("Button not found: {}", name))[..])
-		.try_downcast::<Button>().ok()
-		.expect(&(format!("Widget '{}' is not a Button?", name)[..]))
-}
-
-pub struct Gui {
-//	game_data: &'a mut game::Game,
-	bulls_set: bool,
-}
-
-	    const ICON_WIDTH: u32 = 20;
-	    const ICON_HEIGHT: u32 = 20;
-	    const ICON_SIZE: usize = (ICON_HEIGHT * ICON_WIDTH) as usize;
-
+pub struct Gui;
 impl<'a> Gui {
 	
-//	    let icon_gray: Vec<_> = vec![(155, 155, 155); ICON_SIZE];
-//    	let icon_red: Vec<_> = vec![(255, 0, 0); ICON_SIZE];
-//	    let icon_green: Vec<_> = vec![(0, 255, 0); ICON_SIZE];
-	
-        
-	
-//	pub fn new(data: &'a mut game::Game)-> Gui  {
-	pub fn new()-> Gui  {
-    	Gui {
-			bulls_set: false,
-//			game_data: data,
-    	}
-    }
+	pub fn new()-> Gui { Gui }
 
-	// Generate `x` Buttons with an name starting with `base_name`
-	// , onclick: FnMut
 	fn add_multi_btn (&mut self, labels : Vec<&str>, base_name : &str, vec : &mut Vec<BaseWidget>) -> HashMap<String, Box<Button>> {
 		let mut names: HashMap<String, Box<Button>> = HashMap::with_capacity(labels.len());
 		let mut i = 0;
@@ -78,7 +71,6 @@ impl<'a> Gui {
 	    			Button::new()
 	    			.set_name(&name)
 	    			.set_label(label)
-	//    			.set_onclick(onclick)
 	    			);
 				vec.push(btn.to_base());
 				names.insert(name, btn);
@@ -115,16 +107,7 @@ impl<'a> Gui {
 	        for i in (1..8u8) {
 	        	outputHash.insert(i, self.add_multi_lbl(vec!("t: ", "[1, 2, 3, 4]", "", "", "", ""), &format!("Output_{}", i)[..], &mut children_output));
 	        }
-	/*
-			let mut process_input = move |b: Button| {
-				println!("bar");
-	//       	let outputLine = outputHash.get(&1).expect("expected output line not found");
-	
-				game_data.set_min(3);
-			};
-	*/        
-	
-	        // 
+
 	        for (_, btn) in btns_try {
 	        	btn.set_enabled(false);
 	        }
@@ -132,7 +115,7 @@ impl<'a> Gui {
 	        for (_, btn) in btns_input {
 	        	btn.set_onclick(Gui::process_input);
 	        }
-	    let icon_gray: Vec<_> = vec![(155, 155, 155); ICON_SIZE];
+		    let icon_gray: Vec<_> = vec![(155, 155, 155); ICON_SIZE];
 	
 	        // 
 	        for i in (1..8u8) {
@@ -177,16 +160,11 @@ impl<'a> Gui {
 		let digits = game!().get_digits();
    		let dialog = btn.get_dialog().unwrap();
 	
-//		println!("Button # {:?} clicked! Mode: ",value);
-//		let data = unsafe { &*Current::<game::Game>::new() };
-
 		if game!().is_bulls_set() {
 			// set cows
 			let bulls = game!().get_bulls();
 			let last_try = game!().get_try();
 	    	if game!().set_cows(value) {
-//			    let icon_green: Vec<_> = vec![(0, 255, 0); ICON_SIZE];
-//			    let icon = Image::new_rgb(ICON_WIDTH, ICON_HEIGHT, &icon_green);
 
 			match game!().count() {
 				0 => {
@@ -194,13 +172,7 @@ impl<'a> Gui {
 							"Please check your answers!\n\nDo you like to play again?")
 					},
 				
-/*				2 ... 5 => {
-					self.try = self.possible_guesses.pop().unwrap();
-					print!("Es könnten noch {}\nund {}. sein! Versuch letztere Combi: ",
-                    Color::BrightBlack.paint(vec_to_str(&possible_guesses)), (Color::Yellow.paint(arr_to_str(&guesses))));
-					stdout().flush().ok().expect("Could not flush stdout");
-                },
-*/				1 => {
+				1 => {
 					return Gui::show_dialog(dialog, "I know it!",
 							&format!("It is {:?}\nDo you like to play again?",
 								game!().get_try() )[..])
@@ -225,9 +197,9 @@ impl<'a> Gui {
 		 		
 				let round = game!().get_round();
 				
-	    let icon_gray: Vec<_> = vec![(155, 155, 155); ICON_SIZE];
-    	let icon_red: Vec<_> = vec![(255, 0, 0); ICON_SIZE];
-	    let icon_green: Vec<_> = vec![(0, 255, 0); ICON_SIZE];
+			    let icon_gray: Vec<_> = vec![(155, 155, 155); ICON_SIZE];
+		    	let icon_red: Vec<_> = vec![(255, 0, 0); ICON_SIZE];
+			    let icon_green: Vec<_> = vec![(0, 255, 0); ICON_SIZE];
 		    	let name = format!("LblOutput_{}_0", round);
 		 		widget_by_name!(dialog, Label, name).set_text(&format!("Try {}: ", round)[..]).show();		
 		    	let name = format!("LblOutput_{}_1", round);
@@ -236,10 +208,7 @@ impl<'a> Gui {
 		        	let icon = if i < (bulls +2) { &icon_green }
 		        		else if i < ( bulls + value +2) { &icon_red }
 		        		else { &icon_gray };
-/*		        	let icon = if i > ( digits - bulls +1) { &icon_green }
-		        		else if i > ( digits - bulls - value +1) { &icon_red }
-		        		else { &icon_gray };
-*/			    	let name = format!("LblOutput_{}_{}", round, i);
+			    	let name = format!("LblOutput_{}_{}", round, i);
 		        	widget_by_name!(dialog, Label, name)
 					.set_image(Image::new_rgb(ICON_WIDTH, ICON_HEIGHT, icon))
 					.show();
@@ -272,11 +241,6 @@ impl<'a> Gui {
 	 		}
     	}
 		CallbackStatus::Default
-	// , self.game_data.min
-	   //    let dialog = caller.get_dialog().unwrap();
-	//    let button = dialog.get_child("Btn0").unwrap();
-	//    button.set_enabled(!button.get_enabled());
-	//		                    .set_image(Image::new_rgb(ICON_WIDTH, ICON_HEIGHT, &icon_data))
 	}
 	
 	fn set_next(dialog: Dialog) {
