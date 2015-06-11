@@ -1,20 +1,15 @@
 // extern crate term_painter;
 use term_painter::ToStyle;
 use term_painter::Color;
-use term_painter::Attr;
 
 use std::io::stdin;
 use std::io::Write;
 use std::io::stdout;
-use std::fmt;
 
 use game;
 use game::Game;
 
 use std;
-use std::collections::HashMap;
-use std::boxed::Box;
-use std::str::FromStr;
 
 /*
 extern crate current;
@@ -38,7 +33,7 @@ impl<'a> Tui<'a> {
 
 	pub fn run (&mut self) {
 		println!("run");
-		let mut guesses = self.game_data.get_try();
+		let mut guesses = self.game_data.get_guess();
 		loop {
 	        
 	        print!("Wie viele {} und {} Treffer gibt es bei {}?\n(Einfach nur die Zahlen mit einem Trennzeichen eingeben) : ",
@@ -76,7 +71,7 @@ impl<'a> Tui<'a> {
 				
 			self.game_data.set_bulls(bulls);
 			
-			let last_try = self.game_data.get_try();
+			let last_guess = self.game_data.get_guess();
 	    	self.game_data.set_cows(cows);
 				
 				match self.game_data.count() {

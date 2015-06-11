@@ -9,7 +9,7 @@ pub struct Game {
  round: u8,
 all_combs: Vec<[u8; 4]>,
 pub possible_guesses : Vec<[u8; 4]>,
-try: [u8; 4],
+guess: [u8; 4],
 }
 
 impl<'a> Game {
@@ -24,7 +24,7 @@ impl<'a> Game {
 //			cows: 0,
 			round: 0,
     		all_combs: all_combs.clone(),
-    		try: all_combs.pop().unwrap(),
+    		guess: all_combs.pop().unwrap(),
     		possible_guesses : all_combs,
     	}
     	
@@ -35,7 +35,7 @@ impl<'a> Game {
 		self.bulls_set = false;
 		self.bulls = 0;
 		self.round = 0;
-		self.try = all_combs.pop().unwrap();
+		self.guess = all_combs.pop().unwrap();
 		self.possible_guesses = all_combs;
     }
 
@@ -43,7 +43,7 @@ impl<'a> Game {
 	pub fn get_digits(&mut self) -> u8 { self.digits }
 	pub fn get_bulls(&mut self) -> u8 { self.bulls }
 	pub fn get_round(&mut self) -> u8 { self.round }
-	pub fn get_try(&mut self) -> [u8; 4] { self.try }
+	pub fn get_guess(&mut self) -> [u8; 4] { self.guess }
 	pub fn count(&mut self) -> usize { self.possible_guesses.iter().count() }
 
 	pub fn set_bulls(&mut self, x: u8) -> bool {
@@ -71,16 +71,16 @@ fn calculate_score(given_digits: &[u8], guessed_digits: &[u8]) -> (u8, u8) {
 		if !self.bulls_set || cows + self.bulls > self.digits { return false; }
 		
 		let bulls = self.bulls;
-		let try = self.try;
+		let guess = self.guess;
 		// eliminate patterns with non-matching scores
-		self.possible_guesses.retain(|&x| (bulls, cows) == Game::calculate_score(&try, &x));
-		self.try = self.possible_guesses.pop().unwrap_or([0,0,0,0]);
+		self.possible_guesses.retain(|&x| (bulls, cows) == Game::calculate_score(&guess, &x));
+		self.guess = self.possible_guesses.pop().unwrap_or([0,0,0,0]);
 
 /*			
 			match self.possible_guesses.iter().count() {
 				0 => { false },
 				2 ... 5 => {
-					self.try = self.possible_guesses.pop().unwrap();
+					self.guess = self.possible_guesses.pop().unwrap();
 					print!("Es könnten noch {}\nund {}. sein! Versuch letztere Combi: ",
                     Color::BrightBlack.paint(vec_to_str(&possible_guesses)), (Color::Yellow.paint(arr_to_str(&guesses))));
 					stdout().flush().ok().expect("Could not flush stdout");

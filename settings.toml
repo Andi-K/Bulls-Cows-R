@@ -1,7 +1,10 @@
 [game]
-min = 0
-max = 7
+min = 1
+max = 9
 digits = 4
+
+foo  = [ "red", "yellow", "green" ]
+bar = [ 1, 2, 3, 4, 5, 6 ]
 	
 [UI]
 use_gui = true

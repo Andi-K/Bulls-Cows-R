@@ -17,10 +17,10 @@ fn main() {
 	
 	let mut game_data = game::Game::new(cfg.digits, cfg.min, cfg.max);
 
-	if cfg.useGui {
+	if cfg.use_gui {
 		mod gui;
 		// guard is used, don't remove!
-		// we can use the game! macro as long as it life
+		// we can use ne game! macro as long as it life
 		let guard = CurrentGuard::new(&mut game_data);
 		let mut ui = gui::Gui::new();
 		ui.run();
