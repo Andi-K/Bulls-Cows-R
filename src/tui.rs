@@ -32,8 +32,10 @@ impl<'a> Tui<'a> {
     }
 
 	pub fn run (&mut self) {
-		println!("run");
-		let mut guesses = self.game_data.get_guess();
+		println!("The text based UI is broken, please use the GUI.");
+		unimplemented!();
+/*		println!("run");
+//		let mut guesses = self.game_data.guess;
 		loop {
 	        
 	        print!("Wie viele {} und {} Treffer gibt es bei {}?\n(Einfach nur die Zahlen mit einem Trennzeichen eingeben) : ",
@@ -46,7 +48,7 @@ impl<'a> Tui<'a> {
 			let mut reader = std::io::stdin();
 			loop {
 				answer_string = "".to_string();
-				let _ = reader.read_line(&mut answer_string).unwrap();
+				let _ = reader.read_line(&mut answer_string).expect(GPM!());
 				// println!("Eingabe ist {:?}! :)", answer_string);
 				if answer_string.trim().to_string() == "x".to_string() { break }
 				let mut answer_chars = answer_string.trim().chars();
@@ -71,23 +73,23 @@ impl<'a> Tui<'a> {
 				
 			self.game_data.set_bulls(bulls);
 			
-			let last_guess = self.game_data.get_guess();
+//			let last_guess = self.game_data.guess;
 	    	self.game_data.set_cows(cows);
 				
 				match self.game_data.count() {
 					0 => {
 	                println!("{}", (Color::Red.paint("Kann nicht sein! Abbruch..."))); break},
 					2 ... 5 => {
-						guesses = self.game_data.possible_guesses.pop().unwrap();
+						guesses = self.game_data.possible_guesses.pop().expect(GPM!());
 						print!("Es könnten noch {}\nund {}. sein! Versuch letztere Combi: ",
 	                    Color::BrightBlack.paint(Game::vec_to_str(&self.game_data.possible_guesses)), (Color::Yellow.paint(Game::arr_to_str(&guesses))));
 						stdout().flush().ok().expect("Could not flush stdout");
 	                },
 					1 => {
-						guesses = self.game_data.possible_guesses.pop().unwrap();
+						guesses = self.game_data.possible_guesses.pop().expect(GPM!());
 	                println!("\nEs ist {}! :)", (Color::Green.paint(Game::arr_to_str(&guesses)))); break },
 					_ => {
-						guesses = self.game_data.possible_guesses.pop().unwrap();
+						guesses = self.game_data.possible_guesses.pop().expect(GPM!());
 						print!("Und bei {}? ({} mögliche Kombinationen): ",
 	                    (Color::Yellow.paint(Game::arr_to_str(&guesses))), self.game_data.possible_guesses.iter().count() + 1);
 						stdout().flush().ok().expect("Could not flush stdout");
@@ -99,21 +101,21 @@ impl<'a> Tui<'a> {
 			println!("\nNochmal? ({} und {} beenden das Programm)", (Color::BrightBlack.paint("x")), (Color::BrightBlack.paint("n")));
 			let mut answer_string = String::new();
 			let mut reader = std::io::stdin();
-			let _ = reader.read_line(&mut answer_string).unwrap();
+			let _ = reader.read_line(&mut answer_string).expect(GPM!());
 			// println!("Eingabe ist {:?}! :)", answer_string);
-			match answer_string.trim().chars().nth(0).unwrap() {
+			match answer_string.trim().chars().nth(0).expect(GPM!()) {
 				'x' | 'n' => { break},
 				_ => {}
 	        }
 		}
-	}
+*/	}
 }
 
 fn parse_answer_string(chars: &mut std::str::Chars) -> (u8, u8) {
 	let mut bulls: u8 = 99;
 	let mut cows: u8 = 99;
 	
-	match chars.nth(0).unwrap() {
+	match chars.nth(0).expect(GPM!()) {
 		'0' => {bulls = 0} ,
 		'1' => {bulls = 1} ,
 		'2' => {bulls = 2} ,
@@ -122,7 +124,7 @@ fn parse_answer_string(chars: &mut std::str::Chars) -> (u8, u8) {
 		_ => {},
     }
 	
-	match chars.nth(1).unwrap() {
+	match chars.nth(1).expect(GPM!()) {
 		'0' => {cows = 0} ,
 		'1' => {cows = 1} ,
 		'2' => {cows = 2} ,

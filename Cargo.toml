@@ -1,7 +1,7 @@
 [package]
 
 name = "Bulls & Cows in reverse"
-version = "0.0.2"
+version = "0.0.3"
 authors = [ "Your name <you@example.com>" ]
 
 [[bin]]
@@ -9,8 +9,8 @@ authors = [ "Your name <you@example.com>" ]
 name = "bcr"
 
 [dependencies]
-# lazy_static = "0.1.*"
 toml = "0.1"
+rustc-serialize = "*"
 term-painter = "*"
 
 [dependencies.kiss-ui]
